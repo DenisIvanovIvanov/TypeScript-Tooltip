@@ -82,22 +82,26 @@ export default class Tooltip {
             case "top":
                 return {
                     top: (position["top"] - actualHeight) - 10,
-                    left: position["left"] - position["w"] / 2 - actualWidth / 2
+                    left: position["left"] - position["w"] / 2 - actualWidth / 2,
+                    h: actualHeight
                 }
             case "left":
                 return {
                     top: position["top"] + position["height"] / 2 - actualHeight / 2,
-                    left: (position["left"] - actualWidth) - 10
+                    left: (position["left"] - actualWidth) - 10,
+                    h: actualHeight
                 }
             case "bottom":
                 return {
                     top: (position["top"] + position["height"]) + 10,
-                    left: position["left"] + position["w"] / 2 - actualWidth / 2
+                    left: position["left"] + position["w"] / 2 - actualWidth / 2,
+                    h: actualHeight
                 }
             case "right":
                 return {
                     top: position["top"] + position["height"] / 2 - actualHeight / 2,
-                    left: position["left"] + position["w"] + 10
+                    left: position["left"] + position["w"] + 10,
+                    h: actualHeight
                 }
         }
     }
@@ -122,10 +126,26 @@ export default class Tooltip {
         let placement = this.defaults.position,
             elPosition = this.getTargetPosition(),
             calculatedOffsets = this.calcOffsets(placement, elPosition);
+
+        /**
+         * Add calculated top, left and height to the tooltip itself
+         */
+        this.el.style.top = calculatedOffsets.top + "px";
+        this.el.style.left = calculatedOffsets.left + "px";
+        this.el.style.height = calculatedOffsets.h + "px";
     };
 
     private show() {
-        
+        this.createElement();
+
+        this.el.addEventListener("click", ev => {
+            ev.stopPropagation();
+        });
+
+        /**
+         * Add the css class to show the tooltip
+         */
+        this.el.classList.add(this.StyleSheets["di-tooltip-open"]);
     };
 
     private destroy() {
